@@ -1,30 +1,37 @@
-const a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen ']
-const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+function humanize(num){
+  var ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+              'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
+              'seventeen', 'eighteen', 'nineteen'];
+  var tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
+              'ninety'];
 
-const regex = /^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/
+  var numString = num.toString();
 
-const getLT20 = (n) => a[Number(n)]
-const get20Plus = (n) => b[n[0]] + ' ' + a[n[1]]
+  if (num < 0) throw new Error('Negative numbers are not supported.');
 
-module.exports = function toReadable (number) {
-  const num = Number(number)
-  if (isNaN(num)) return ''
-  if (num === 0) return 'zero'
+  if (num === 0) return 'zero';
 
-  const numStr = num.toString()
-  if (numStr.length > 9) {
-    throw new Error('overflow') // Does not support converting more than 9 digits yet
+  //the case of 1 - 20
+  if (num < 20) {
+    return ones[num];
   }
 
-  const [, n1, n2, n3, n4, n5] = ('000000000' + numStr).substr(-9).match(regex) // left pad zeros
+  if (numString.length === 2) {
+    return tens[numString[0]] + ' ' + ones[numString[1]];
+  }
 
-  let str = ''
-  str += n1 != 0 ? (getLT20(n1) || get20Plus(n1)) + 'crore ' : ''
-  str += n2 != 0 ? (getLT20(n2) || get20Plus(n2)) + 'lakh ' : ''
-  str += n3 != 0 ? (getLT20(n3) || get20Plus(n3)) + 'thousand ' : ''
-  str += n4 != 0 ? getLT20(n4) + 'hundred ' : ''
-  str += n5 != 0 && str != '' ? 'and ' : ''
-  str += n5 != 0 ? (getLT20(n5) || get20Plus(n5)) : ''
+  //100 and more
+  if (numString.length == 3) {
+    if (numString[1] === '0' && numString[2] === '0')
+      return ones[numString[0]] + ' hundred';
+    else
+      return ones[numString[0]] + ' hundred and ' + convert(+(numString[1] + numString[2]));
+  }
 
-  return str.trim()
+  if (numString.length === 4) {
+    var end = +(numString[1] + numString[2] + numString[3]);
+    if (end === 0) return ones[numString[0]] + ' thousand';
+    if (end < 100) return ones[numString[0]] + ' thousand and ' + convert(end);
+    return ones[numString[0]] + ' thousand ' + convert(end);
+  }
 }
