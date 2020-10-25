@@ -2,7 +2,7 @@ module.exports = function humanize(num){
   var ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
               'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
               'seventeen', 'eighteen', 'nineteen'];
-  var tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
+  var tens = ['', 'eleven', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty',
               'ninety'];
 
   var numString = num.toString();
@@ -25,13 +25,13 @@ module.exports = function humanize(num){
     if (numString[1] === '0' && numString[2] === '0')
       return ones[numString[0]] + ' hundred';
     else
-      return ones[numString[0]] + ' hundred and ' + convert(+(numString[1] + numString[2]));
+      return ones[numString[0]] + ' hundred ' + convert(+(numString[1] + numString[2]));
   }
 
   if (numString.length === 4) {
     var end = +(numString[1] + numString[2] + numString[3]);
     if (end === 0) return ones[numString[0]] + ' thousand';
-    if (end < 100) return ones[numString[0]] + ' thousand and ' + convert(end);
+    if (end < 100) return ones[numString[0]] + ' thousand ' + convert(end);
     return ones[numString[0]] + ' thousand ' + convert(end);
   }
 }
